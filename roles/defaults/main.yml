@@ -1,0 +1,9 @@
+---
+ansible_user: <ansible_user>
+ansible_password: <ansible_password>
+ansible_port: '5986'
+ansible_connection: 'winrm'
+ansible_winrm_server_cert_validation: ignore
+ansible_winrm_transport: ntlm
+ansible_winrm_transport: kerberos
+validate_certs: false

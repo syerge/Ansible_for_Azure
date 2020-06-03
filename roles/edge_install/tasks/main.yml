@@ -1,0 +1,7 @@
+---
+- name: Install Microsoft-edge 
+  win_chocolatey:
+    name: microsoft-edge
+    state: latest
+  tags: syerge
+ 

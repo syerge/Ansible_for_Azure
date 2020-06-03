@@ -1,0 +1,7 @@
+---
+- name: Install Notepad++
+  win_chocolatey:
+    name: notepadplusplus
+    pinned: yes
+    state: latest
+  tags: syerge

@@ -1,0 +1,74 @@
+---
+- name: Join virtual machine to the domain [ domain.com ]
+  win_domain_membership:
+    dns_domain_name: win.domain.com
+    ansible_connection: winrm
+    hostanme: Win10VMTest
+    domain_admin_user: '{{ win_domain_admin_user }}'
+    domain_admin_password: '{{ win_domain_admin_password }}'
+    domain_ou_path: "OU_path"
+    state:  domain
+  register: domain_state
+  tags: join
+
+- name: Reboot virtual machine after joining to the domain
+  win_reboot:
+  when:  domain_state.reboot_required
+  tags: join
+
+- name: Collecting windows AD status after reboot
+  win_shell: wmic computersystem get name,domain,partofdomain
+  register: vm_domainInfo
+  tags: join
+
+- name: Verifying windows AD status after reboot
+  debug:
+    msg:  "{{ vm_domainInfo.stdout_lines[:] }}"
+  tags: join
+
+- name: setfacts for reboot
+  set_fact:
+    start_time: "{{ ansible_date_time.iso8601[:19] | to_datetime('%Y-%m-%dT%H:%M:%S') | add_time(minutes=10) }}"  
+    end_time: "{{ ansible_date_time.iso8601[:19] | to_datetime('%Y-%m-%dT%H:%M:%S') | add_time(minutes=30) }}"  
+  #delegate_to: Win10VMTestIP
+  tags: disjoin
+
+- name: scheduling reboot after domain disjoin
+  win_scheduled_task:
+    name: Reboot_After_Updates
+    username: SYSTEM
+    actions:
+    - path: Powershell.exe
+      arguments: |
+        Restart-Computer
+    triggers:
+    - type: time
+      start_boundary: '{{ start_time }}'    #'{{ ansible_date_time.date }}T{{ ansible_date_time.time }}'
+      end_boundary: '{{ end_time }}' #'{{ ansible_date_time.date }}T23:30:00'
+    state: present
+    enabled: yes
+  tags: disjoin
+
+- name: Dis-Join virtual machine from the domain
+  win_domain_membership:
+    workgroup_name: WORKGROUP
+    domain_admin_user: '{{ win_domain_admin_user }}'
+    domain_admin_password: '{{ win_domain_admin_password }}'
+    state: workgroup
+  register: workgroup_state
+  tags: disjoin
+
+#- name: Reboot virtual machine after disjoining to the domain
+#  win_reboot:
+#  when: workgroup_state.reboot_required
+#  tags: disjoin
+
+- name: Remove system from OU #RSAT module needed on remote system 
+  win_shell: |
+         $secpasswd = ConvertTo-SecureString "{{ win_admin_password }}" -AsPlainText -Force
+         $mycreds = New-Object System.Management.Automation.PSCredential ( "{{ win_admin_user }}", $secpasswd)
+         Remove-ADComputer -Identity "WIN10VMTEST-1" -Credential $mycreds -Confirm:$false -Server "CDCDC1"
+  register: remove_cn
+  delegate_to: localhost
+  tags: remove
+

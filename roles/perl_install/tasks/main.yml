@@ -1,0 +1,6 @@
+---
+- name: Install Active Perl 
+  win_chocolatey:
+    name: activeperl
+    state: latest
+  tags: syerge

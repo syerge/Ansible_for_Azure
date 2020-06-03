@@ -1,0 +1,11 @@
+plugin: azure_rm
+include_vm_resource_groups:
+         - <RGName>
+
+auth_source: auto
+ansible_host: (private_ipv4_addresses)
+plain_host_names: yes
+
+keyed_groups:
+            - prefix: tag
+              key: tags

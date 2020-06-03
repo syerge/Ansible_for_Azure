@@ -1,0 +1,31 @@
+---
+- name: Create temp directory
+  win_file:
+    path: C:\temp
+    state: directory
+  tags: syerge 
+- name: Create Testing_Reports directory
+  win_file:
+    path: C:\Testing_Reports 
+    state: directory
+  tags: syerge
+- name: Assign FullControl Access to user on C:\temp
+  win_acl:
+    path: C:\temp
+    user: Domain\user
+    rights: FullControl
+    type: allow
+    state: present
+    inherit: ContainerInherit, ObjectInherit
+    propagation: 'None'
+  tags: syerge
+- name: Assign FullControl Access to user on C:\Testing_Reports
+  win_acl:
+    path: C:\Testing_Reports
+    user: Domain\user
+    rights: FullControl
+    type: allow
+    state: present
+    inherit: ContainerInherit, ObjectInherit
+    propagation: 'None'
+  tags: syerge

@@ -1,0 +1,24 @@
+---
+- name: Post Install 
+  hosts: TestVM1
+  gather_facts: yes
+  roles: 
+    - chrome_install  
+    - git_install
+    - python_install 
+    - perl_install    
+    - java_install
+    - vs2019_install 
+    - create_folders    
+    - time_zone
+    - set_region
+
+#    - firefox_install
+#    - domain
+#    - add_admin
+#    - ie_install
+#    - notepadplus_install
+#    - mount_share 
+#    - set_path_var
+#    - reboot_VM
+

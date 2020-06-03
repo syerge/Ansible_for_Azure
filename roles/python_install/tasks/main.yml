@@ -1,0 +1,12 @@
+---
+- name: Install python 
+  win_chocolatey:
+    name: python
+    state: latest
+  tags: syerge
+- name: Install Selenium module
+  win_shell: pip install selenium
+  tags: syerge
+- name: Install Pandas module
+  win_shell: pip install pandas
+  tags: syerge

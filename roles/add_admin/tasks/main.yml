@@ -1,0 +1,4 @@
+---
+- name: Ensure user cducert added to Administartors 
+  win_shell: Add-LocalGroupMember -Group "Administrators" -Member "Domain\user"
+  tags: syerge

@@ -1,0 +1,6 @@
+---
+- name: Install Visual Studio 2019 Community
+  win_chocolatey:
+    name: visualstudio2019community
+    state: latest
+  tags: syerge

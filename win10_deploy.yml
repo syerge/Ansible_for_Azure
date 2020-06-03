@@ -1,0 +1,162 @@
+---
+- hosts: localhost
+  gather_facts: no
+  vars:
+        location: __location__
+        osDiskType: Premium SSD
+        Vnet: __Vnet__ #ResourceID
+        subnetName: __Subnet__
+        businessUnit: IT
+        virtualMachineName: __VMName__
+        virtualMachineRG: __RGName__
+        virtualMachineSize: __VMSize__
+        storageAccount: __SAName__
+        adminUsername: __admin__
+        adminPassword: __password__
+        environment_used: Test
+        createdby: syerge
+        managedby: Shrikant Yerge
+        team: IT
+        workload: Test
+        projectName: Ansible
+        os_disk_size_gb: 150
+        managed_Disk_Type: Standard_LRS
+        os_type: Windows
+        os_offer: Windows-10
+        publisher: MicrosoftWindowsDesktop
+        sku: rs5-pro
+        powershell_cmds: Set-NetFirewallProfile -Profile Domain,Public,Private -Enabled False; Invoke-Expression -Command ((New-Object System.Net.WebClient).DownloadString('https://raw.githubusercontent.com/ansible/ansible/devel/examples/scripts/ConfigureRemotingForAnsible.ps1')); Enable-WSManCredSSP -Role Server -Force
+  tasks:
+      - name: Checking resource group availability.
+        azure_rm_resourcegroup:
+          name: "{{ virtualMachineRG }}"
+          location: "{{ location }}"
+          state: present
+          append_tags: false
+          tags:
+                      businessUnit: "{{ businessUnit}}"
+                      environment_used: "{{ environment_used }}"
+                      createdBy: "{{ createdBy }}"
+                      managedBy: "{{ managedBy }}"
+                      team: "{{ team }}"
+                      workload: "{{ workload }}"
+                      projectName: "{{ projectName }}"
+  
+      - name: Checking Storage account availability.
+        azure_rm_storageaccount:
+          resource_group: "{{ virtualMachineRG }}"
+          location: "{{ location }}"
+          name: "{{ storageAccount }}"
+          type: Standard_LRS
+          state: present
+          append_tags: false
+          tags:
+                      businessUnit: "{{ businessUnit}}"
+                      environment_used: "{{ environment_used }}"
+                      createdBy: "{{ createdBy }}"
+                      managedBy: "{{ managedBy }}"
+                      team: "{{ team }}"
+                      workload: "{{ workload }}"
+                      projectName: "{{ projectName }}"			  
+      - name: Create public IP address
+        azure_rm_publicipaddress:
+          resource_group: "{{ virtualMachineRG }}"
+          allocation_method: Static
+          name: "{{ virtualMachineName }}-pip"
+        register: public_ip_address 			
+       
+      - name: Dump public IP for VM which will be created
+        debug:
+          msg: "The public IP is {{ public_ip_address.state.ip_address }}."
+
+      - name: Create Network Security Group that allows RDP and WinRM
+        azure_rm_securitygroup:
+          resource_group: "{{ virtualMachineRG }}"
+          name: "{{ virtualMachineName }}-nsg"
+          rules:
+            - name: RDP
+              protocol: Tcp
+              destination_port_range: 3389
+              access: Allow
+              priority: 1001
+              direction: Inbound
+            - name: WinRM
+              protocol: Tcp
+              destination_port_range: 5986
+              access: Allow
+              priority: 1002
+              direction: Inbound
+
+      - name: Creating virtual network interface using existing virtual network.
+        azure_rm_networkinterface:
+          name: "{{ virtualMachineName }}-nic"
+          resource_group: "{{ virtualMachineRG }}"
+          location: "{{ location }}"
+          virtual_network: "{{ Vnet }}" 
+          subnet: "{{ subnetName }}"
+          create_with_security_group: yes
+          #ip_configurations: "{{ virtualMachineName }}-nsg"
+                    #- name: ipconfig1
+                     # primary: True
+          public_ip: yes
+          security_group: "{{ virtualMachineName }}-nsg"
+          public_ip_name: "{{ virtualMachineName }}-pip"            
+          tags:
+                      businessUnit: "{{ businessUnit}}"
+                      environment_used: "{{ environment_used }}"
+                      createdBy: "{{ createdBy }}"
+                      managedBy: "{{ managedBy }}"
+                      team: "{{ team }}"
+                      workload: "{{ workload }}"
+                      projectName: "{{ projectName }}"
+      - name: Creating Virtual Machine as requested.
+        azure_rm_virtualmachine:
+          resource_group: "{{ virtualMachineRG }}"
+          name: "{{ virtualMachineName }}"
+          vm_size: "{{ virtualMachineSize }}"
+          location: "{{ location }}"
+          managed_disk_type: "{{ managed_Disk_Type }}"
+          storage_account: "{{ storageAccount }}"
+          os_type: "{{ os_type }}"
+          os_disk_size_gb: "{{ os_disk_size_gb }}"
+          admin_username: "{{ adminUsername }}"
+          admin_password: "{{ adminPassword }}"
+          network_interfaces: "{{ virtualMachineName }}-nic"
+          boot_diagnostics:
+                       enabled: yes
+          image:
+                       offer: "{{ os_offer }}"
+                       publisher: "{{ publisher }}"
+                       sku: "{{ sku }}"
+                       version: latest
+          tags:
+                      businessUnit: "{{ businessUnit}}"
+                      environment_used: "{{ environment_used }}"
+                      createdBy: "{{ createdBy }}"
+                      managedBy: "{{ managedBy }}"
+                      team: "{{ team }}"
+                      workload: "{{ workload }}"
+                      projectName: "{{ projectName }}"
+                      os_type: "{{ os_type }}"
+        register: azure_resource
+
+      - name: Collecting Azure VM private IP Address
+        set_fact:
+                      vm_private_ip: "{{ azure_resource.ansible_facts.azure_vm.properties.networkProfile.networkInterfaces[0].properties.ipConfigurations[0].properties.privateIPAddress }}" 
+
+      - name: Disable Windows Firewall and create Azure vm extension to enable HTTPS WinRM listener
+        azure_rm_virtualmachineextension:
+          name: ansible-extension
+          resource_group: "{{ virtualMachineRG }}"
+          virtual_machine_name: "{{ virtualMachineName }}"
+          publisher: Microsoft.Compute
+          virtual_machine_extension_type: CustomScriptExtension
+          type_handler_version: '1.9'
+          settings: '{"commandToExecute": "powershell.exe -ExecutionPolicy ByPass -Command {{powershell_cmds}}"}'
+          auto_upgrade_minor_version: true
+
+      - name: wait for the WinRM port to come online
+        wait_for:
+          port: 5986
+          host: "{{ vm_private_ip }}"
+          timeout: 300   

@@ -1,0 +1,6 @@
+---
+- name: Install firefox 
+  win_chocolatey:
+    name: firefox
+    state: latest
+  tags: syerge

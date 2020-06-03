@@ -1,0 +1,6 @@
+---
+- name: Install Internet Explorer 11 
+  win_chocolatey:
+    name: ie11
+    state: latest
+  tags: syerge

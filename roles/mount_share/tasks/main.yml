@@ -1,0 +1,8 @@
+---
+
+- name: Mount Share \\abcd\tlab_share
+  win_mapped_drive:
+    letter: X 
+    path: \\abcd\tlab_share 
+    #username: "{{ username }}"
+    #password: "{{ password }}"

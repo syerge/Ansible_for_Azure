@@ -1,0 +1,5 @@
+---
+#Not needed chocolatey set it by default
+- name : Set Java PATH environment variable 
+  win_shell: Set-Item -Path Env:JAVA_HOME -Value ($Env:JAVA_HOME + ";C:\Program Files\Java\jre1.8.0_241\bin")
+  tags: syerge

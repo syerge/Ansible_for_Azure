@@ -1,0 +1,6 @@
+---
+- name: Install java run time
+  win_chocolatey:
+    name: javaruntime
+    state: latest
+  tags: syerge

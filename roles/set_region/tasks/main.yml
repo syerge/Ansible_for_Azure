@@ -1,0 +1,49 @@
+---
+- name: Set chinese format, location and unicode language and copy settings, reboot if required
+  win_region:
+    location: 45  #https://msdn.microsoft.com/en-us/library/dd374073.aspx
+    format: zh-CN #https://msdn.microsoft.com/en-us/library/system.globalization.cultureinfo.aspx
+    copy_settings: yes
+    unicode_language: zh-CN #https://msdn.microsoft.com/en-us/library/system.globalization.cultureinfo.aspx
+  register: result
+  tags: China
+
+- name: Set Japanese format, location and unicode language and copy settings, reboot if required
+  win_region:
+    location: 122  
+    format: ja-JP 
+    copy_settings: yes
+    unicode_language: ja-JP 
+  register: result
+  tags: Japan
+
+- name: Set Korean format, location and unicode language and copy settings, reboot if required
+  win_region:
+    location: 134  
+    format: ko-KR 
+    copy_settings: yes
+    unicode_language: ko-KR 
+  register: result
+  tags: Korea
+
+- name: Set French format, location and unicode language and copy settings, reboot if required
+  win_region:
+    location: 84  
+    format: fr-FR 
+    copy_settings: yes
+    unicode_language: fr-FR 
+  register: result
+  tags: France
+
+- name: Set German format, location and unicode language and copy settings, reboot if required
+  win_region:
+    location: 94  
+    format: de-DE 
+    copy_settings: yes
+    unicode_language: de-DE
+  register: result
+  tags: Germany
+
+- win_reboot:
+  when: result.restart_required
+  

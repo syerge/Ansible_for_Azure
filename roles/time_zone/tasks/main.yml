@@ -1,0 +1,26 @@
+---
+
+- name: Set timezone to 'India Standard Time' (IST)
+  win_timezone:
+    timezone: India Standard Time
+  tags: India
+
+- name: Set timezone to 'China Standard Time' 
+  win_timezone:
+    timezone: China Standard Time
+  tags: China
+
+- name: Set timezone to 'Romance Standard Time'
+  win_timezone:
+    timezone: Romance Standard Time
+  tags: France
+
+- name: Set timezone to 'Tokyo Standard Time' 
+  win_timezone:
+    timezone: Tokyo Standard Time
+  tags: Japan
+
+- name: Set timezone to 'Korea Standard Time' 
+  win_timezone:
+    timezone: Korea Standard Time
+  tags: Korea

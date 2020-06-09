@@ -9,7 +9,7 @@
     - perl_install    
     - java_install
     - vs2019_install 
-    - create_folders    
+#    - create_folders    
     - time_zone
     - set_region
 

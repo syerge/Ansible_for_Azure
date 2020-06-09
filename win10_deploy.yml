@@ -9,7 +9,7 @@
         businessUnit: IT
         virtualMachineName: __VMName__
         virtualMachineRG: __RGName__
-        virtualMachineSize: __VMSize__
+        virtualMachineSize: __VMSize__ #Ex. Standard_B2s
         storageAccount: __SAName__
         adminUsername: __admin__
         adminPassword: __password__

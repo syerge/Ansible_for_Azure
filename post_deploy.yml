@@ -1,6 +1,6 @@
 ---
 - name: Post Install 
-  hosts: TestVM1
+  hosts: __VMName__ #Replace with your VM name
   gather_facts: yes
   roles: 
     - chrome_install  

@@ -31,7 +31,7 @@
           state: present
           append_tags: false
           tags:
-                      createdBy: "{{ createdBy }}"
+                      createdby: "{{ createdby }}"
                       team: "{{ team }}"
                       workload: "{{ workload }}"
                       projectName: "{{ projectName }}"
@@ -45,7 +45,7 @@
           state: present
           append_tags: false
           tags:
-                      createdBy: "{{ createdBy }}"
+                      createdby: "{{ createdby }}"
                       team: "{{ team }}"
                       workload: "{{ workload }}"
                       projectName: "{{ projectName }}"			  
@@ -92,8 +92,7 @@
           tags:
                       businessUnit: "{{ businessUnit}}"
                       environment_used: "{{ environment_used }}"
-                      createdBy: "{{ createdBy }}"
-                      managedBy: "{{ managedBy }}"
+                      createdby: "{{ createdby }}"
                       team: "{{ team }}"
                       workload: "{{ workload }}"
                       projectName: "{{ projectName }}"
@@ -118,7 +117,7 @@
                        sku: "{{ sku }}"
                        version: latest
           tags:
-                      createdBy: "{{ createdBy }}"
+                      createdby: "{{ createdby }}"
                       team: "{{ team }}"
                       workload: "{{ workload }}"
                       projectName: "{{ projectName }}"

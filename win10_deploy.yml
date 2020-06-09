@@ -34,8 +34,6 @@
           state: present
           append_tags: false
           tags:
-                      businessUnit: "{{ businessUnit}}"
-                      environment_used: "{{ environment_used }}"
                       createdby: "{{ createdby }}"
                       managedby: "{{ managedby }}"
                       team: "{{ team }}"
@@ -51,8 +49,6 @@
           state: present
           append_tags: false
           tags:
-                      businessUnit: "{{ businessUnit}}"
-                      environment_used: "{{ environment_used }}"
                       createdby: "{{ createdby }}"
                       managedby: "{{ managedby }}"
                       team: "{{ team }}"
@@ -102,8 +98,6 @@
           security_group: "{{ virtualMachineName }}-nsg"
           public_ip_name: "{{ virtualMachineName }}-pip"            
           tags:
-                      businessUnit: "{{ businessUnit}}"
-                      environment_used: "{{ environment_used }}"
                       createdby: "{{ createdby }}"
                       managedby: "{{ managedby }}"
                       team: "{{ team }}"
@@ -130,8 +124,6 @@
                        sku: "{{ sku }}"
                        version: latest
           tags:
-                      businessUnit: "{{ businessUnit}}"
-                      environment_used: "{{ environment_used }}"
                       createdby: "{{ createdby }}"
                       managedby: "{{ managedby }}"
                       team: "{{ team }}"

@@ -90,8 +90,6 @@
           security_group: "{{ virtualMachineName }}-nsg"
           public_ip_name: "{{ virtualMachineName }}-pip"            
           tags:
-                      businessUnit: "{{ businessUnit}}"
-                      environment_used: "{{ environment_used }}"
                       createdby: "{{ createdby }}"
                       team: "{{ team }}"
                       workload: "{{ workload }}"

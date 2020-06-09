@@ -4,7 +4,7 @@
   vars:
         location: __location__
         osDiskType: Premium SSD
-        Vnet: __Vnet__
+        Vnet: __Vnet__ #ResorceID
         subnetName: __Subnet__
         virtualMachineName: __VMName__
         virtualMachineRG: __RGName__
